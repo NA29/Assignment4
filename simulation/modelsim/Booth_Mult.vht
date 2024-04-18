@@ -2,12 +2,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Booth_Mult is
+entity booth_tb is
 end entity;
 
 
 
-architecture sim of Booth_Mult is
+architecture sim of booth_tb is
 
 	component Booth_Mult is
 		Port(In_1	: in std_logic_vector(7 downto 0);

@@ -1,76 +1,61 @@
--- Copyright (C) 2018  Intel Corporation. All rights reserved.
--- Your use of Intel Corporation's design tools, logic functions 
--- and other software and tools, and its AMPP partner logic 
--- functions, and any output files from any of the foregoing 
--- (including device programming or simulation files), and any 
--- associated documentation or information are expressly subject 
--- to the terms and conditions of the Intel Program License 
--- Subscription Agreement, the Intel Quartus Prime License Agreement,
--- the Intel FPGA IP License Agreement, or other applicable license
--- agreement, including, without limitation, that your use is for
--- the sole purpose of programming logic devices manufactured by
--- Intel and sold by Intel or its authorized distributors.  Please
--- refer to the applicable agreement for further details.
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
--- ***************************************************************************
--- This file contains a Vhdl test bench template that is freely editable to   
--- suit user's needs .Comments are provided in each section to help the user  
--- fill out necessary details.                                                
--- ***************************************************************************
--- Generated on "04/17/2024 20:54:54"
-                                                            
--- Vhdl Test Bench template for design  :  Booth_Mult
--- 
--- Simulation tool : ModelSim-Altera (VHDL)
--- 
+entity Booth_Mult is
+end entity;
 
-LIBRARY ieee;                                               
-USE ieee.std_logic_1164.all;                                
 
-ENTITY Booth_Mult_vhd_tst IS
-END Booth_Mult_vhd_tst;
-ARCHITECTURE Booth_Mult_arch OF Booth_Mult_vhd_tst IS
--- constants                                                 
--- signals                                                   
-SIGNAL clk : STD_LOGIC;
-SIGNAL done : STD_LOGIC;
-SIGNAL In_1 : STD_LOGIC_VECTOR(7 DOWNTO 0);
-SIGNAL In_2 : STD_LOGIC_VECTOR(7 DOWNTO 0);
-SIGNAL ready : STD_LOGIC;
-SIGNAL S : STD_LOGIC_VECTOR(15 DOWNTO 0);
-COMPONENT Booth_Mult
-	PORT (
-	clk : IN STD_LOGIC;
-	done : OUT STD_LOGIC;
-	In_1 : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-	In_2 : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-	ready : IN STD_LOGIC;
-	S : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
-	);
-END COMPONENT;
-BEGIN
-	i1 : Booth_Mult
-	PORT MAP (
--- list connections between master ports and signals
-	clk => clk,
-	done => done,
-	In_1 => In_1,
-	In_2 => In_2,
-	ready => ready,
-	S => S
-	);
-init : PROCESS                                               
--- variable declarations                                     
-BEGIN                                                        
-        -- code that executes only once                      
-WAIT;                                                       
-END PROCESS init;                                           
-always : PROCESS                                              
--- optional sensitivity list                                  
--- (        )                                                 
--- variable declarations                                      
-BEGIN                                                         
-        -- code executes for every event on sensitivity list  
-WAIT;                                                        
-END PROCESS always;                                          
-END Booth_Mult_arch;
+
+architecture sim of Booth_Mult is
+
+	component Booth_Mult is
+		Port(In_1	: in std_logic_vector(7 downto 0);
+			  In_2	: in std_logic_vector(7 downto 0);
+			  clk		: in std_logic;
+			  ready	: in std_logic;
+			  done	: out std_logic;
+			  S		: out std_logic_vector(15 downto 0) );
+	end component;
+
+
+	constant clkFrequency  : integer := 100e6; --100 MHz
+	constant clkPeriod		: time	 := 100 ms / clkFrequency;
+	
+	signal In_1_tb, In_2_tb		: std_logic_vector(7 downto 0);
+	signal clk_tb					: std_logic := '1';
+	signal ready_tb, done_tb	: std_logic;
+	signal S_tb						: std_logic_vector(15 downto 0);
+	
+	
+begin
+	
+
+	DUT : Booth_Mult
+		port map(In_1 => In_1_tb,
+					In_2 => In_2_tb,
+					clk => clk_tb,
+					ready => ready_tb,
+					S => S_tb );
+					
+		
+	-- generating clock
+	clk_tb <= not clk_tb after clkPeriod/2;
+	
+	process
+	begin
+		--test 1
+		In_1_tb <= "00000001";
+		In_2_tb <= "00000010";
+		ready_tb <= '1';
+		wait for clkPeriod;
+		ready_tb <= '0';
+			
+		wait until done_tb = '1';
+		
+
+		wait;
+				
+	end process;
+	
+end architecture;
